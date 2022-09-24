@@ -16,9 +16,8 @@ func NewDoubleStack(position int, text string) *DoubleStack {
 		after: make([]rune, 0),
 		position: position,
 	}
-	marker := position + 1
 	for i, character := range text {
-		if i <= marker {
+		if i < position {
 			ds.before = append(ds.before, character)
 		} else {
 			ds.after = append(ds.after, character)
