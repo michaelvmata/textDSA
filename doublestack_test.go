@@ -14,7 +14,32 @@ func TestDoubleStack(t *testing.T) {
 	if len(ds.after) != len(text) {
 		t.Fatalf("DoubleStack len(ds.after)=%d, expected=%d", len(ds.after), len(text))
 	}
+
+	skip := 2
+	ds.Skip(skip)
+	if ds.Text() != text {
+		t.Fatalf("DoubleStack Text()=%s, expected=%s", ds.Text(), text)
+	}
+	if len(ds.before) != skip {
+		t.Fatalf("DoubleStack len(ds.before)=%d, expected=%d", len(ds.before), 2)
+	}
+	if len(ds.after) != len(text) - skip {
+		t.Fatalf("DoubleStack len(ds.after)=%d, expected=%d", len(ds.after), len(text)-skip)
+	}
+
+	skip = len(text) - skip
+	ds.Skip(skip)
+	if ds.Text() != text {
+		t.Fatalf("DoubleStack Text()=%s, expected=%s", ds.Text(), text)
+	}
+	if len(ds.before) != skip {
+		t.Fatalf("DoubleStack len(ds.before)=%d, expected=%d", len(ds.before), 2)
+	}
+	if len(ds.after) != len(text) - skip {
+		t.Fatalf("DoubleStack len(ds.after)=%d, expected=%d", len(ds.after), len(text)-skip)
+	}
+
+
 	ds.Insert(0, " ")
 	ds.Delete(0, " ")
-	ds.Skip(1)
 }

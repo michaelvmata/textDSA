@@ -23,6 +23,11 @@ func NewDoubleStack(position int, text string) *DoubleStack {
 			ds.after = append(ds.after, character)
 		}
 	}
+
+	for i := 0; i < len(ds.after) / 2; i++ {
+		j := len(ds.after) - i - 1
+		ds.after[i], ds.after[j] = ds.after[j], ds.after[i]
+	}
 	return &ds
 }
 
@@ -33,7 +38,8 @@ func (ds *DoubleStack) Text() string {
 	for _, character := range ds.before {
 		b.WriteRune(character)
 	}
-	for _, character := range ds.after {
+	for k := range ds.after {
+		character := ds.after[len(ds.after) - k - 1]
 		b.WriteRune(character)
 	}
 	return b.String()
@@ -48,7 +54,18 @@ func (ds *DoubleStack) Delete(position int, value string) {
 }
 
 func (ds *DoubleStack) Skip(position int) {
-
+	for position < ds.position {
+		l := len(ds.before)
+		character := ds.before[l-1]
+		ds.before = ds.before[:l-1]
+		ds.after = append(ds.after, character)
+		ds.position -= 1
+	}
+	for position > ds.position {
+		l := len(ds.after)
+		character := ds.after[l-1]
+		ds.after = ds.after[:l-1]
+		ds.before = append(ds.before, character)
+		ds.position += 1
+	}
 }
-
-
