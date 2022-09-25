@@ -45,27 +45,47 @@ func (ds *DoubleStack) Text() string {
 	return b.String()
 }
 
-func (ds *DoubleStack) Insert(position int, s string) {
-
+func (ds *DoubleStack) Insert(s string) {
+	text := []rune(s)
+	for k := range text {
+		character := text[len(s) - k - 1]
+		ds.after = append(ds.after, character)
+	}
 }
 
-func (ds *DoubleStack) Delete(position int, value string) {
-
+func (ds *DoubleStack) Delete(count int) {
+	for i:=0; i < count; i++ {
+		l := len(ds.after)
+		ds.after = ds.after[:l-1]
+	}
 }
 
-func (ds *DoubleStack) Skip(position int) {
-	for position < ds.position {
+func (ds *DoubleStack) Skip(count int) {
+	if count > 0 {
+		ds.Forward(count)
+	} else if count < 0 {
+		ds.Backward(-count)
+	}
+}
+
+func (ds *DoubleStack) Backward(count int) {
+	for count > 0 && ds.position > 0 {
 		l := len(ds.before)
 		character := ds.before[l-1]
 		ds.before = ds.before[:l-1]
 		ds.after = append(ds.after, character)
 		ds.position -= 1
+		count -= 1
 	}
-	for position > ds.position {
+}
+
+func (ds *DoubleStack) Forward(count int) {
+	for count > 0 && len(ds.after) > 0 {
 		l := len(ds.after)
 		character := ds.after[l-1]
 		ds.after = ds.after[:l-1]
 		ds.before = append(ds.before, character)
 		ds.position += 1
+		count -= 1
 	}
 }
