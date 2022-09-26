@@ -54,7 +54,7 @@ func (ds *DoubleStack) Insert(s string) {
 }
 
 func (ds *DoubleStack) Delete(count int) {
-	for i:=0; i < count; i++ {
+	for i:=0; i < count && len(ds.after) > 0; i++ {
 		l := len(ds.after)
 		ds.after = ds.after[:l-1]
 	}
