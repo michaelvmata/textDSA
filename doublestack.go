@@ -5,15 +5,15 @@ import (
 )
 
 type DoubleStack struct {
-	before []rune
-	after []rune
+	before   []rune
+	after    []rune
 	position int
 }
 
 func NewDoubleStack(position int, text string) *DoubleStack {
 	ds := DoubleStack{
-		before: make([]rune, 0),
-		after: make([]rune, 0),
+		before:   make([]rune, 0),
+		after:    make([]rune, 0),
 		position: position,
 	}
 	for i, character := range text {
@@ -24,13 +24,12 @@ func NewDoubleStack(position int, text string) *DoubleStack {
 		}
 	}
 
-	for i := 0; i < len(ds.after) / 2; i++ {
+	for i := 0; i < len(ds.after)/2; i++ {
 		j := len(ds.after) - i - 1
 		ds.after[i], ds.after[j] = ds.after[j], ds.after[i]
 	}
 	return &ds
 }
-
 
 func (ds *DoubleStack) Text() string {
 	var b strings.Builder
@@ -39,7 +38,7 @@ func (ds *DoubleStack) Text() string {
 		b.WriteRune(character)
 	}
 	for k := range ds.after {
-		character := ds.after[len(ds.after) - k - 1]
+		character := ds.after[len(ds.after)-k-1]
 		b.WriteRune(character)
 	}
 	return b.String()
@@ -48,13 +47,13 @@ func (ds *DoubleStack) Text() string {
 func (ds *DoubleStack) Insert(s string) {
 	text := []rune(s)
 	for k := range text {
-		character := text[len(s) - k - 1]
+		character := text[len(s)-k-1]
 		ds.after = append(ds.after, character)
 	}
 }
 
 func (ds *DoubleStack) Delete(count int) {
-	for i:=0; i < count && len(ds.after) > 0; i++ {
+	for i := 0; i < count && len(ds.after) > 0; i++ {
 		l := len(ds.after)
 		ds.after = ds.after[:l-1]
 	}

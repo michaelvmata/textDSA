@@ -23,7 +23,7 @@ func TestDoubleStack(t *testing.T) {
 	if len(ds.before) != skip {
 		t.Fatalf("DoubleStack len(ds.before)=%d, expected=%d", len(ds.before), 2)
 	}
-	if len(ds.after) != len(text) - skip {
+	if len(ds.after) != len(text)-skip {
 		t.Fatalf("DoubleStack len(ds.after)=%d, expected=%d", len(ds.after), len(text)-skip)
 	}
 
@@ -38,7 +38,6 @@ func TestDoubleStack(t *testing.T) {
 	if len(ds.after) != 0 {
 		t.Fatalf("DoubleStack len(ds.after)=%d, expected=%d", len(ds.after), 0)
 	}
-
 
 	space := " "
 	ds.Insert(space)
