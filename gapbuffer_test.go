@@ -30,3 +30,10 @@ func TestGapBuffer(t *testing.T) {
 		t.Fatalf("GapBuffer Text()=%s expected=%s", gb.Text(), text)
 	}
 }
+
+func TestEmptyNewGapBuffer(t *testing.T) {
+	gb := NewGapBuffer("")
+	if gb.GapLength == 0 {
+		t.Fatalf("GapLength=%d, expected > 0", gb.GapLength)
+	}
+}

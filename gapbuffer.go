@@ -10,13 +10,19 @@ type GapBuffer struct {
 	Buffer    []rune
 }
 
+const DefaultGapSize = 1024
+
 func NewGapBuffer(text string) *GapBuffer {
-	buffer := make([]rune, len(text)*2)
+	gapLength := len(text)
+	if gapLength < DefaultGapSize {
+		gapLength = DefaultGapSize
+	}
+	buffer := make([]rune, len(text)+gapLength)
 	copy(buffer, []rune(text))
 	return &GapBuffer{
 		Buffer:    buffer,
 		GapIndex:  len(text),
-		GapLength: len(text),
+		GapLength: gapLength,
 	}
 }
 
