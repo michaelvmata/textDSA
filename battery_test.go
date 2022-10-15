@@ -1,6 +1,9 @@
 package textDSA
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 type Operation int8
 
@@ -76,22 +79,33 @@ func buildInsertTestCase() OTTestCase {
 	return ott
 }
 
-func TestDoubleStackBattery(t *testing.T) {
+type Transformer interface {
+	Insert(string)
+	Delete(int)
+	Skip(int)
+	Text() string
+}
+
+func TestBattery(t *testing.T) {
+	RunBattery(t, func(position int, original string) Transformer { return NewDoubleStack(position, original) })
+}
+
+func RunBattery(t *testing.T, newTransformer func(int, string) Transformer) {
 	battery := BuildBatteryOfTestCases()
 	for _, testCase := range battery {
-		ds := NewDoubleStack(testCase.position, testCase.original)
+		transformer := newTransformer(testCase.position, testCase.original)
 		for _, ot := range testCase.operationalTransformations {
 			switch ot.operation {
 			case Insert:
-				ds.Insert(ot.text)
+				transformer.Insert(ot.text)
 			case Delete:
-				ds.Delete(ot.count)
+				transformer.Delete(ot.count)
 			case Skip:
-				ds.Skip(ot.count)
+				transformer.Skip(ot.count)
 			}
 		}
-		if ds.Text() != testCase.expected {
-			t.Fatalf("TestCase label=%s, ds.Text()=%s, expected=%s", testCase.label, ds.Text(), testCase.expected)
+		if transformer.Text() != testCase.expected {
+			t.Fatalf("Transformer %s TestCase label=%s, ds.Text()=%s, expected=%s", reflect.TypeOf(transformer).Elem().Name(), testCase.label, transformer.Text(), testCase.expected)
 		}
 	}
 }
