@@ -31,9 +31,52 @@ func TestGapBuffer(t *testing.T) {
 	}
 }
 
-func TestEmptyNewGapBuffer(t *testing.T) {
+func TestGapBuffer_Empty(t *testing.T) {
 	gb := NewGapBuffer("")
 	if gb.GapLength == 0 {
-		t.Fatalf("GapLength=%d, expected > 0", gb.GapLength)
+		t.Fatalf("Zero gap length.")
+	}
+
+	gb.Forward(1)
+	if gb.GapIndex != 0 {
+		t.Fatalf("Forward should be a NOOP. GapIndex=%d, expected=1", gb.GapIndex)
+	}
+
+	gb.Backward(1)
+	if gb.GapIndex != 0 {
+		t.Fatalf("Backward should be a NOOP. GapIndex=%d, expected=0", gb.GapIndex)
+	}
+
+	gb.Delete(1)
+	if gb.GapIndex != 0 {
+		t.Fatalf("Delete should be a NOOP. GapIndex=%d", gb.GapIndex)
+	}
+}
+
+func TestGapBuffer_SingleCharacter(t *testing.T) {
+	text := "x"
+	gb := NewGapBuffer(text)
+	if gb.GapIndex != 1 {
+		t.Fatalf("GapIndex=%d, expected=1", gb.GapIndex)
+	}
+
+	gb.Forward(1)
+	if gb.GapIndex != 1 {
+		t.Fatalf("Forward should be a NOOP. GapIndex=%d, expected=1", gb.GapIndex)
+	}
+
+	gb.Backward(1)
+	if gb.GapIndex != 0 {
+		t.Fatalf("Backward to start of buffer. GapIndex=%d, expected=0", gb.GapIndex)
+	}
+
+	gb.Backward(1)
+	if gb.GapIndex != 0 {
+		t.Fatalf("Backward should be a NOOP. GapIndex=%d, expected=0", gb.GapIndex)
+	}
+
+	gb.Forward(2)
+	if gb.GapIndex != len(text) {
+		t.Fatalf("Forward to end of text.  GapIndex=%d, expected=1", gb.GapIndex)
 	}
 }
