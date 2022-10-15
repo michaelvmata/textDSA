@@ -4,7 +4,7 @@ import "testing"
 
 func TestDoubleStack(t *testing.T) {
 	text := "foobar"
-	ds := NewDoubleStack(0, text)
+	ds := NewDoubleStack(text)
 	if ds.Text() != text {
 		t.Fatalf("DoubleStack Text()=%s, expected=%s", ds.Text(), text)
 	}

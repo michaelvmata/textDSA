@@ -35,16 +35,14 @@ type OTTestCase struct {
 	label                      string
 	original                   string
 	expected                   string
-	position                   int
 	operationalTransformations []OperationalTransformation
 }
 
-func NewOTTestCase(label string, original string, expected string, position int) OTTestCase {
+func NewOTTestCase(label string, original string, expected string) OTTestCase {
 	return OTTestCase{
 		label:                      label,
 		original:                   original,
 		expected:                   expected,
-		position:                   position,
 		operationalTransformations: make([]OperationalTransformation, 0),
 	}
 }
@@ -58,14 +56,14 @@ func BuildBatteryOfTestCases() []OTTestCase {
 }
 
 func buildBlankTestCase() OTTestCase {
-	ott := NewOTTestCase("Blank text", "", "", 0)
+	ott := NewOTTestCase("Blank text", "", "")
 	ott.operationalTransformations = append(ott.operationalTransformations, OperationalTransformation{operation: Delete, count: 5})
 	ott.operationalTransformations = append(ott.operationalTransformations, OperationalTransformation{operation: Skip, count: -5})
 	return ott
 }
 
 func buildDeleteTestCase() OTTestCase {
-	ott := NewOTTestCase("Multi Delete", "abcd", "a", 0)
+	ott := NewOTTestCase("Multi Delete", "abcd", "a")
 	ott.operationalTransformations = append(ott.operationalTransformations, OperationalTransformation{operation: Skip, count: 1})
 	ott.operationalTransformations = append(ott.operationalTransformations, OperationalTransformation{operation: Delete, count: 2})
 	ott.operationalTransformations = append(ott.operationalTransformations, OperationalTransformation{operation: Delete, count: 1})
@@ -73,7 +71,7 @@ func buildDeleteTestCase() OTTestCase {
 }
 
 func buildInsertTestCase() OTTestCase {
-	ott := NewOTTestCase("Multi insert", "a", "dcba", 0)
+	ott := NewOTTestCase("Multi insert", "a", "dcba")
 	ott.operationalTransformations = append(ott.operationalTransformations, OperationalTransformation{operation: Insert, text: "b"})
 	ott.operationalTransformations = append(ott.operationalTransformations, OperationalTransformation{operation: Insert, text: "dc"})
 	return ott
@@ -87,13 +85,13 @@ type Transformer interface {
 }
 
 func TestBattery(t *testing.T) {
-	RunBattery(t, func(position int, original string) Transformer { return NewDoubleStack(position, original) })
+	RunBattery(t, func(original string) Transformer { return NewDoubleStack(original) })
 }
 
-func RunBattery(t *testing.T, newTransformer func(int, string) Transformer) {
+func RunBattery(t *testing.T, newTransformer func(string) Transformer) {
 	battery := BuildBatteryOfTestCases()
 	for _, testCase := range battery {
-		transformer := newTransformer(testCase.position, testCase.original)
+		transformer := newTransformer(testCase.original)
 		for _, ot := range testCase.operationalTransformations {
 			switch ot.operation {
 			case Insert:

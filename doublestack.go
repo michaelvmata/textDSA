@@ -10,20 +10,12 @@ type DoubleStack struct {
 	position int
 }
 
-func NewDoubleStack(position int, text string) *DoubleStack {
+func NewDoubleStack(text string) *DoubleStack {
 	ds := DoubleStack{
 		before:   make([]rune, 0),
-		after:    make([]rune, 0),
-		position: position,
+		after:    []rune(text),
+		position: 0,
 	}
-	for i, character := range text {
-		if i < position {
-			ds.before = append(ds.before, character)
-		} else {
-			ds.after = append(ds.after, character)
-		}
-	}
-
 	for i := 0; i < len(ds.after)/2; i++ {
 		j := len(ds.after) - i - 1
 		ds.after[i], ds.after[j] = ds.after[j], ds.after[i]
@@ -87,4 +79,12 @@ func (ds *DoubleStack) Forward(count int) {
 		ds.position += 1
 		count -= 1
 	}
+}
+
+func (ds DoubleStack) Peek() string {
+	l := len(ds.after)
+	if l > 0 {
+		return string(ds.after[l-1])
+	}
+	return ""
 }
