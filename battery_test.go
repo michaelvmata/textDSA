@@ -3,6 +3,7 @@ package textDSA
 import "testing"
 
 type Operation int8
+
 const (
 	Insert Operation = iota
 	Delete
@@ -23,14 +24,14 @@ func (o Operation) String() string {
 
 type OperationalTransformation struct {
 	operation Operation
-	count int
-	text string
+	count     int
+	text      string
 }
 
 type OTTestCase struct {
-	label string
-	original string
-	expected string
+	label                      string
+	original                   string
+	expected                   string
 	position                   int
 	operationalTransformations []OperationalTransformation
 }
