@@ -1,6 +1,8 @@
 package textDSA
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestGapBuffer(t *testing.T) {
 	text := "hello, world"
@@ -28,6 +30,73 @@ func TestGapBuffer(t *testing.T) {
 	gb.Delete(len(prefix))
 	if gb.Text() != text {
 		t.Fatalf("GapBuffer Text()=%s expected=%s", gb.Text(), text)
+	}
+}
+
+func TestGapBuffer_GrowGap(t *testing.T) {
+	testCases := []struct {
+		original []rune
+		expected []rune
+		index    int
+		length   int
+	}{
+		{
+			[]rune{},
+			[]rune{0},
+			0,
+			0,
+		},
+		{
+			[]rune{65},
+			[]rune{0, 65},
+			0,
+			0,
+		},
+		{
+			[]rune{65},
+			[]rune{65, 0},
+			1,
+			0,
+		},
+		{[]rune{65, 66},
+			[]rune{0, 0, 65, 66},
+			0,
+			0,
+		},
+		{[]rune{65, 66},
+			[]rune{65, 0, 0, 66},
+			1,
+			0,
+		},
+		{[]rune{65, 66},
+			[]rune{65, 66, 0, 0},
+			2,
+			0,
+		},
+		{[]rune{65, 65, 66, 66},
+			[]rune{65, 65, 00, 00, 00, 00, 66, 66},
+			2,
+			0,
+		},
+	}
+
+	for _, testCase := range testCases {
+		gb := NewGapBuffer("")
+		gb.Buffer = make([]rune, len(testCase.original))
+		copy(gb.Buffer, testCase.original)
+		for i := range gb.Buffer {
+			if gb.Buffer[i] != testCase.original[i] {
+				t.Fatalf("Test pre grow gap mismatch actual=%v, original=%v", gb.Buffer, testCase.original)
+			}
+		}
+		gb.GapIndex = testCase.index
+		gb.GapLength = testCase.length
+		gb.GrowGap()
+		for i := range gb.Buffer {
+			if gb.Buffer[i] != testCase.expected[i] {
+				t.Fatalf("Test grow gap mismatch actual=%v, expected=%v", gb.Buffer, testCase.expected)
+			}
+		}
 	}
 }
 

@@ -56,10 +56,19 @@ func (gb *GapBuffer) Backward(count int) {
 }
 
 func (gb *GapBuffer) GrowGap() {
-	buffer := make([]rune, len(gb.Buffer)*2)
-	copy(buffer, gb.Buffer[:gb.GapIndex])
-	copy(buffer, gb.Buffer[gb.GapIndex+gb.GapLength:])
+	grow := len(gb.Buffer)
+	if grow == 0 {
+		grow = 1
+	}
+	buffer := make([]rune, len(gb.Buffer)+grow)
+	if gb.GapIndex != 0 {
+		copy(buffer, gb.Buffer[:gb.GapIndex])
+	}
+	if gb.GapIndex < len(gb.Buffer) {
+		copy(buffer[gb.GapIndex+gb.GapLength+grow:], gb.Buffer[gb.GapIndex+gb.GapLength:])
+	}
 	gb.Buffer = buffer
+	gb.GapLength += grow
 }
 
 func (gb *GapBuffer) Insert(s string) {
