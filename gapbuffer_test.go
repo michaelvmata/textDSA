@@ -33,6 +33,84 @@ func TestGapBuffer(t *testing.T) {
 	}
 }
 
+func TestGapBuffer_Insert(t *testing.T) {
+	testCases := []struct {
+		original []rune
+		expected []rune
+		index    int
+		length   int
+		text     string
+	}{
+		{
+			[]rune{},
+			[]rune{65},
+			0,
+			0,
+			"A",
+		},
+		{
+			[]rune{66},
+			[]rune{65, 66},
+			0,
+			0,
+			"A",
+		},
+		{
+			[]rune{65},
+			[]rune{65, 66},
+			1,
+			0,
+			"B",
+		},
+		{
+			[]rune{0, 66},
+			[]rune{65, 66},
+			0,
+			1,
+			"A",
+		},
+		{
+			[]rune{65, 0},
+			[]rune{65, 66},
+			1,
+			1,
+			"B",
+		},
+		{
+			[]rune{65, 0, 0, 65},
+			[]rune{65, 66, 67, 65},
+			1,
+			2,
+			"BC",
+		},
+		{
+			[]rune{65, 0, 0, 65},
+			[]rune{65, 66, 67, 68, 0, 0, 0, 65},
+			1,
+			2,
+			"BCD",
+		},
+	}
+	for _, testCase := range testCases {
+		gb := NewGapBuffer("")
+		gb.Buffer = make([]rune, len(testCase.original))
+		copy(gb.Buffer, testCase.original)
+		for i := range gb.Buffer {
+			if gb.Buffer[i] != testCase.original[i] {
+				t.Fatalf("Test pre grow gap mismatch actual=%v, original=%v", gb.Buffer, testCase.original)
+			}
+		}
+		gb.GapIndex = testCase.index
+		gb.GapLength = testCase.length
+		gb.Insert(testCase.text)
+		for i := range gb.Buffer {
+			if gb.Buffer[i] != testCase.expected[i] {
+				t.Fatalf("Test grow gap mismatch actual=%v, expected=%v", gb.Buffer, testCase.expected)
+			}
+		}
+	}
+}
+
 func TestGapBuffer_GrowGap(t *testing.T) {
 	testCases := []struct {
 		original []rune
