@@ -90,6 +90,13 @@ func TestGapBuffer_Insert(t *testing.T) {
 			2,
 			"BCD",
 		},
+		{
+			[]rune{65, 66},
+			[]rune{67, 68, 65, 66},
+			0,
+			0,
+			"CD",
+		},
 	}
 	for _, testCase := range testCases {
 		gb := NewGapBuffer("")
@@ -103,6 +110,9 @@ func TestGapBuffer_Insert(t *testing.T) {
 		gb.GapIndex = testCase.index
 		gb.GapLength = testCase.length
 		gb.Insert(testCase.text)
+		if len(gb.Buffer) != len(testCase.expected) {
+			t.Fatalf("Buffer length mismatch actual=%v, expected=%v", gb.Buffer, testCase.expected)
+		}
 		for i := range gb.Buffer {
 			if gb.Buffer[i] != testCase.expected[i] {
 				t.Fatalf("Test grow gap mismatch actual=%v, expected=%v", gb.Buffer, testCase.expected)
