@@ -45,8 +45,9 @@ func TestDoubleStack(t *testing.T) {
 		t.Fatalf("DoubleStack Text()=%s, expected=%s", ds.Text(), text+space)
 	}
 
+	ds.Skip(-1)
 	ds.Delete(1)
 	if ds.Text() != text {
-		t.Fatalf("DoubleStack Text()=%s, expected=%s", ds.Text(), text)
+		t.Fatalf("DoubleStack Text()='%s', expected='%s'", ds.Text(), text)
 	}
 }

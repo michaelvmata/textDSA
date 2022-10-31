@@ -71,7 +71,7 @@ func buildDeleteTestCase() OTTestCase {
 }
 
 func buildInsertTestCase() OTTestCase {
-	ott := NewOTTestCase("Multi insert", "a", "dcba")
+	ott := NewOTTestCase("Multi insert", "a", "bdca")
 	ott.operationalTransformations = append(ott.operationalTransformations, OperationalTransformation{operation: Insert, text: "b"})
 	ott.operationalTransformations = append(ott.operationalTransformations, OperationalTransformation{operation: Insert, text: "dc"})
 	return ott

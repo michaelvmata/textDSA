@@ -38,9 +38,14 @@ func (ds *DoubleStack) Text() string {
 
 func (ds *DoubleStack) Insert(s string) {
 	text := []rune(s)
+	for i := 0; i < len(text)/2; i++ {
+		j := len(text) - i - 1
+		text[i], text[j] = text[j], text[i]
+	}
 	for k := range text {
 		character := text[len(s)-k-1]
-		ds.after = append(ds.after, character)
+		ds.before = append(ds.before, character)
+		ds.position++
 	}
 }
 
