@@ -77,6 +77,13 @@ func buildInsertTestCase() OTTestCase {
 	return ott
 }
 
+func buildForwardDeleteTestCase() OTTestCase {
+	ott := NewOTTestCase("Forward Delete", "abcd", "abd")
+	ott.operationalTransformations = append(ott.operationalTransformations, OperationalTransformation{operation: Skip, count: 2})
+	ott.operationalTransformations = append(ott.operationalTransformations, OperationalTransformation{operation: Delete, count: 1})
+	return ott
+}
+
 type Transformer interface {
 	Insert(string)
 	Delete(int)
