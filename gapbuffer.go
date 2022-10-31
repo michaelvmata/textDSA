@@ -29,6 +29,14 @@ func (gb GapBuffer) Text() string {
 	return b.String()
 }
 
+func (gb *GapBuffer) Skip(count int) {
+	if count > 0 {
+		gb.Forward(count)
+	} else if count < 0 {
+		gb.Backward(-count)
+	}
+}
+
 func (gb *GapBuffer) Forward(count int) {
 	for count > 0 && gb.GapIndex+gb.GapLength < len(gb.Buffer) {
 		if gb.GapLength > 0 {
