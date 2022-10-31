@@ -103,7 +103,7 @@ func RunBattery(t *testing.T, newTransformer func(string) Transformer) {
 			}
 		}
 		if transformer.Text() != testCase.expected {
-			t.Fatalf("Transformer %s TestCase label=%s, ds.Text()=%s, expected=%s", reflect.TypeOf(transformer).Elem().Name(), testCase.label, transformer.Text(), testCase.expected)
+			t.Fatalf("Transformer %s TestCase label=%s, ds.Text()='%s', expected='%s'", reflect.TypeOf(transformer).Elem().Name(), testCase.label, transformer.Text(), testCase.expected)
 		}
 	}
 }
