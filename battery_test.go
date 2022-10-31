@@ -86,6 +86,7 @@ type Transformer interface {
 
 func TestBattery(t *testing.T) {
 	RunBattery(t, func(original string) Transformer { return NewDoubleStack(original) })
+	RunBattery(t, func(original string) Transformer { return NewGapBuffer(original) })
 }
 
 func RunBattery(t *testing.T, newTransformer func(string) Transformer) {
