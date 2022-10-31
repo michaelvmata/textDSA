@@ -10,25 +10,17 @@ type GapBuffer struct {
 	Buffer    []rune
 }
 
-const DefaultGapSize = 1024
-
 func NewGapBuffer(text string) *GapBuffer {
-	gapLength := len(text)
-	if gapLength < DefaultGapSize {
-		gapLength = DefaultGapSize
-	}
-	buffer := make([]rune, len(text)+gapLength)
-	copy(buffer, []rune(text))
 	return &GapBuffer{
-		Buffer:    buffer,
-		GapIndex:  len(text),
-		GapLength: gapLength,
+		Buffer:    []rune(text),
+		GapIndex:  0,
+		GapLength: 0,
 	}
 }
 
 func (gb GapBuffer) Text() string {
 	var b strings.Builder
-	b.Grow(cap(gb.Buffer) - gb.GapLength)
+	b.Grow(len(gb.Buffer) - gb.GapLength)
 	for i, character := range gb.Buffer {
 		if i < gb.GapIndex || i > gb.GapIndex+gb.GapLength-1 {
 			b.WriteRune(character)
@@ -38,9 +30,11 @@ func (gb GapBuffer) Text() string {
 }
 
 func (gb *GapBuffer) Forward(count int) {
-	for count > 0 && gb.GapIndex+gb.GapLength < cap(gb.Buffer) {
-		gb.Buffer[gb.GapIndex] = gb.Buffer[gb.GapIndex+gb.GapLength]
-		gb.Buffer[gb.GapIndex+gb.GapLength] = 0
+	for count > 0 && gb.GapIndex+gb.GapLength < len(gb.Buffer) {
+		if gb.GapLength > 0 {
+			gb.Buffer[gb.GapIndex] = gb.Buffer[gb.GapIndex+gb.GapLength]
+			gb.Buffer[gb.GapIndex+gb.GapLength] = 0
+		}
 		count--
 		gb.GapIndex++
 	}
@@ -48,10 +42,12 @@ func (gb *GapBuffer) Forward(count int) {
 
 func (gb *GapBuffer) Backward(count int) {
 	for count > 0 && gb.GapIndex > 0 {
-		gb.Buffer[gb.GapIndex+gb.GapLength-1] = gb.Buffer[gb.GapIndex-1]
+		if gb.GapLength > 0 {
+			gb.Buffer[gb.GapIndex+gb.GapLength-1] = gb.Buffer[gb.GapIndex-1]
+			gb.Buffer[gb.GapIndex-1] = 0
+		}
 		count--
 		gb.GapIndex--
-		gb.Buffer[gb.GapIndex] = 0
 	}
 }
 
@@ -83,15 +79,19 @@ func (gb *GapBuffer) Insert(s string) {
 }
 
 func (gb *GapBuffer) Delete(count int) {
-	for count > 0 && gb.GapIndex+gb.GapLength-1 < cap(gb.Buffer) {
-		gb.Buffer[gb.GapIndex+gb.GapLength-1] = 0
+	if len(gb.Buffer) == 0 || gb.GapIndex+gb.GapLength == len(gb.Buffer) {
+		// No content after gap
+		return
+	}
+	for count > 0 && gb.GapIndex+gb.GapLength < len(gb.Buffer) {
+		gb.Buffer[gb.GapIndex+gb.GapLength] = 0
 		gb.GapLength++
 		count--
 	}
 }
 
 func (gb GapBuffer) Peek() string {
-	if gb.GapIndex+gb.GapLength == cap(gb.Buffer) {
+	if gb.GapIndex+gb.GapLength == len(gb.Buffer) {
 		return ""
 	}
 	return string(gb.Buffer[gb.GapIndex+gb.GapLength])
